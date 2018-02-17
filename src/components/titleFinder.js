@@ -13,40 +13,64 @@ import Header from '../components/header'
 import Tab from '../components/tab'
 import * as Constants from '../constants'
 
-const Recommendation = ({has_poster, title, imdb_rating, released_on, overview}) => {
+function getImageURL (id) {
+  return `${Constants.BASE_IMAGE_URL}/${id}/${Constants.IMAGE_POSTFIX}`
+}
+
+function getRecommendationUrl ({activeTab, minimumScore}) {
+  let params = ''
+  let modifieldFilter = Object.assign({}, Constants.BASE_OPTIONS)
+  modifieldFilter.kind = activeTab === 'TV Shows' ? 1 : 2
+  modifieldFilter.minimumScore = minimumScore
+
+  const keys = Object.keys(modifieldFilter)
+  keys.forEach((key, index) => {
+    params += `${key}=${modifieldFilter[key]}`
+    if (index < keys.length - 1) {
+      params += '&'
+    }
+  })
+  return Constants.BASE_RECOMMENDATION_URL + params
+}
+
+const Recommendation = ({id, has_poster, title, imdb_rating, released_on, overview}) => {
+  const uri = getImageURL(id)
+
   renderImage = () => {
     if (has_poster) {
       return (
         <Image
+          key='image'
           source={{uri}}
           style={{resizeMode: 'stretch', height: 400}} />
       )
     }
   }
 
-  const TypeSelector = ({activeTab, onTabPress}) => {
-    return (
-      <View style={{ flexDirection: 'row' }}>
-        <Tab 
-          name='movies' 
-          isActive={activeTab === 'movies'}
-          onPress={onTabPress}
-        />
-        <Tab 
-          name='series' 
-          isActive={activeTab === 'series'} 
-          onPress={onTabPress}
-        />
-      </View>
-    )
-  }
   return [
-    <Text> {title} </Text>,
+    <Text key='title'> {title} </Text>,
     this.renderImage(),
-    <Text> {`IMDB: ${imdb_rating}`} </Text>,
-    <Text> {new Date(released_on).getFullYear()} </Text>,
-    <Text> {overview} </Text>
+    <Text key='rating'> {`IMDB: ${imdb_rating}`} </Text>,
+    <Text key='year'> {new Date(released_on).getFullYear()} </Text>,
+    <Text key='overview'> {overview} </Text>
   ]
+}
+
+const TypeSelector = ({activeTab, onTabPress}) => {
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <Tab 
+        name='TV Shows' 
+        isActive={activeTab === 'TV Shows'} 
+        onPress={onTabPress}
+      />
+      <Tab 
+        name='Movies' 
+        isActive={activeTab === 'Movies'}
+        onPress={onTabPress}
+      />
+    </View>
+  )
 }
 
 export default class TitleFinder extends Component {
@@ -56,9 +80,8 @@ export default class TitleFinder extends Component {
       loading: false,
       error: null,
       data: null,
-      searchForTVShows: true,
       minimumScore: 0,
-      activeTab: 'movies'
+      activeTab: 'Movies'
     }
   }
 
@@ -67,14 +90,13 @@ export default class TitleFinder extends Component {
       loading: false,
       error: false,
       data: null,
-      searchForTVShows: true,
-      minimumScore: 0
+      minimumScore: 0,
+      activeTab: 'TV Shows'
     })
   }
 
   renderRecommendation (recommendation) {
     const { id } = recommendation
-    const uri = this.getImageURL(id)
     return (
       <ScrollView>
         <Recommendation {...recommendation} />
@@ -102,25 +124,18 @@ export default class TitleFinder extends Component {
   }
 
   renderScorePicker () {
-    const scoreItems = [
-      <Picker.Item key={0} label='Any Score' value={0} />
-    ]
-    for(let score = 1; score<=Constants.MAX_SCORE; score++) {
-      scoreItems.push(
-        <Picker.Item key={score} label={`>${score}`} value={score} />
-      )
-    }
-
+    const scoreToDisplay = this.state.minimumScore === 0 ? 'Any' : `More than ${this.state.minimumScore}`
     return [
-      <Text key='scoreLabel'> Score: </Text>,
+      <Text key='scoreLabel'> IMDB minimum score: </Text>,
       <Slider
         key='scorePicker'
         step={1}
         minimumValue={0}
         maximumValue={9}
-        onValueChange={(itemValue, itemIndex) => this.setState({minimumScore: itemValue})}
+        onValueChange={(newValue) => this.setState({minimumScore: newValue})}
         value={this.state.minimumScore}
-      />
+      />,
+      <Text key='scoreValue'> {scoreToDisplay} </Text>
     ]
   }
 
@@ -167,29 +182,9 @@ export default class TitleFinder extends Component {
     )
   }
 
-  getRecommendationUrl () {
-    let params = ''
-    let modifieldFilter = Object.assign({}, Constants.BASE_OPTIONS)
-    modifieldFilter.kind = this.state.searchForTVShows ? 1 : 2
-    modifieldFilter.genre = this.state.genre
-    modifieldFilter.minimumScore = this.state.minimumScore
-
-    const keys = Object.keys(modifieldFilter)
-    keys.forEach((key, index) => {
-      params += `${key}=${modifieldFilter[key]}`
-      if (index < keys.length - 1) {
-        params += '&'
-      }
-    })
-    return Constants.BASE_RECOMMENDATION_URL + params
-  }
-
-  getImageURL (id) {
-    return `${Constants.BASE_IMAGE_URL}/${id}/${Constants.IMAGE_POSTFIX}`
-  }
-
   fetchData () {
-    const url = this.getRecommendationUrl()
+    const { activeTab, minimumScore } = this.state
+    const url = getRecommendationUrl({activeTab, minimumScore})
     this.setState({
       loading: true,
       data: null,

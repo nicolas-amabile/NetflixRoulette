@@ -7,9 +7,9 @@ const Tab = ({ name, isActive, onPress }) => (
     onPress={() => onPress(name)}>
     
     <Text style={isActive ? [styles.text, styles.textActive] : styles.text}>
-      {name.slice(0,1).toUpperCase() + name.slice(1, name.length)}
+      {name}
     </Text>
-    
+
   </TouchableOpacity>
 )
 
