@@ -7,20 +7,59 @@ import {
   Image,
   Button,
   Picker,
-  Switch
+  Slider
 } from 'react-native'
 import Header from '../components/header'
 import Tab from '../components/tab'
 import * as Constants from '../constants'
 
+const Recommendation = ({has_poster, title, imdb_rating, released_on, overview}) => {
+  renderImage = () => {
+    if (has_poster) {
+      return (
+        <Image
+          source={{uri}}
+          style={{resizeMode: 'stretch', height: 400}} />
+      )
+    }
+  }
+
+  const TypeSelector = ({activeTab, onTabPress}) => {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        <Tab 
+          name='movies' 
+          isActive={activeTab === 'movies'}
+          onPress={onTabPress}
+        />
+        <Tab 
+          name='series' 
+          isActive={activeTab === 'series'} 
+          onPress={onTabPress}
+        />
+      </View>
+    )
+  }
+  return [
+    <Text> {title} </Text>,
+    this.renderImage(),
+    <Text> {`IMDB: ${imdb_rating}`} </Text>,
+    <Text> {new Date(released_on).getFullYear()} </Text>,
+    <Text> {overview} </Text>
+  ]
+}
+
 export default class TitleFinder extends Component {
-  state = {
-    loading: false,
-    error: null,
-    data: null,
-    searchForTVShows: true,
-    minimumScore: 0,
-    activeTab: 'movies'
+  constructor (props) {
+    super(props)
+    this.state = {
+      loading: false,
+      error: null,
+      data: null,
+      searchForTVShows: true,
+      minimumScore: 0,
+      activeTab: 'movies'
+    }
   }
 
   reset () {
@@ -34,17 +73,11 @@ export default class TitleFinder extends Component {
   }
 
   renderRecommendation (recommendation) {
-    const { id, title, imdb_rating, overview, has_poster, released_on } = recommendation
+    const { id } = recommendation
     const uri = this.getImageURL(id)
     return (
       <ScrollView>
-        <Text> {title} </Text>
-        {has_poster && <Image
-          source={{uri}}
-          style={{resizeMode: 'stretch', height: 400}} />}
-        <Text> {`IMDB: ${imdb_rating}`} </Text>
-        <Text> {new Date(released_on).getFullYear()} </Text>
-        <Text> {overview} </Text>
+        <Recommendation {...recommendation} />
         {this.renderSpinButton()}
         {this.renderResetButton()}
       </ScrollView>
@@ -80,32 +113,30 @@ export default class TitleFinder extends Component {
 
     return [
       <Text key='scoreLabel'> Score: </Text>,
-      <Picker
+      <Slider
         key='scorePicker'
-        selectedValue={this.state.minimumScore}
-        style={{width: 100}} 
-        onValueChange={(itemValue, itemIndex) => this.setState({minimumScore: itemValue})}>
-        {scoreItems}
-      </Picker>
+        step={1}
+        minimumValue={0}
+        maximumValue={9}
+        onValueChange={(itemValue, itemIndex) => this.setState({minimumScore: itemValue})}
+        value={this.state.minimumScore}
+      />
     ]
   }
 
-  renderTypeSwitch () {
-    return [
-      <Text key='typeLabel'> TV Shows or Movies? </Text>,
-      <Switch 
-        key='typeSwitch'
-        onValueChange={ (value) => this.setState({ searchForTVShows: value })} 
-        value={ this.state.searchForTVShows } 
-      />,
-      <Text key='typeValue'> {this.state.searchForTVShows ? 'TV Shows' : 'Movies'} </Text>
-    ]
+  renderType () {
+    return (
+      <TypeSelector
+        activeTab={this.state.activeTab}
+        onTabPress={this.onTabPress} />
+    )
   }
 
   renderForm () {  
     return (
       <View style={styles.container}>
-        {this.renderTypeSwitch()}
+        <Header title='Suggest me a title' />
+        {this.renderType()}
         {this.renderScorePicker()}
         {this.renderSpinButton()}
       </View>
@@ -117,7 +148,7 @@ export default class TitleFinder extends Component {
   }
 
   render() {
-    const { loading, data, error } = this.state
+    const { loading, data, error, activeTab } = this.state
     let content
     if (data) {
       return this.renderRecommendation(data)
@@ -129,30 +160,9 @@ export default class TitleFinder extends Component {
       content = this.renderForm()
     }
 
-    const { activeTab } = this.state
-
     return (
       <View style={styles.container}>
-        {!data ? (
-          <View>
-            <Header title="Suggest me a title" />
-            <View style={{ flexDirection: 'row' }}>
-              <Tab 
-                name="movies" 
-                isActive={activeTab === "movies"}
-                onPress={this.onTabPress}
-              />
-              <Tab 
-                name="series" 
-                isActive={activeTab === "series"} 
-                onPress={this.onTabPress}
-              />
-            </View>
-            {content}
-          </View>
-        ) : (
-          {content}
-        )}
+        {content}
       </View>
     )
   }

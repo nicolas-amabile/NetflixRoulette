@@ -1,5 +1,5 @@
 import React from 'react'
-import TitleFinder from './src/containers/titleFinder'
+import TitleFinder from './src/components/titleFinder'
 
 const App = () => (
   <TitleFinder />

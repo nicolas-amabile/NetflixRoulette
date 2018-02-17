@@ -4,13 +4,12 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native'
 const Tab = ({ name, isActive, onPress }) => (
   <TouchableOpacity
     style={isActive ? [styles.container, styles.active] : styles.container}
-    onPress={() => onPress(name)}
-  >
-    <Text
-      style={isActive ? [styles.text, styles.textActive] : styles.text}
-    >
+    onPress={() => onPress(name)}>
+    
+    <Text style={isActive ? [styles.text, styles.textActive] : styles.text}>
       {name.slice(0,1).toUpperCase() + name.slice(1, name.length)}
     </Text>
+    
   </TouchableOpacity>
 )
 
