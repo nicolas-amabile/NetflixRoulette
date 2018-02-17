@@ -18,3 +18,6 @@ export const BASE_OPTIONS = {
 }
 
 export const MAX_SCORE = 9
+
+export const TV_SHOWS = 'TV Shows'
+export const MOVIES = 'Movies'

@@ -6,32 +6,13 @@ import {
   ScrollView,
   Image,
   Button,
-  Picker,
-  Slider
+  Slider,
+  ActivityIndicator
 } from 'react-native'
 import Header from '../components/header'
 import Tab from '../components/tab'
 import * as Constants from '../constants'
-
-function getImageURL (id) {
-  return `${Constants.BASE_IMAGE_URL}/${id}/${Constants.IMAGE_POSTFIX}`
-}
-
-function getRecommendationUrl ({activeTab, minimumScore}) {
-  let params = ''
-  let modifieldFilter = Object.assign({}, Constants.BASE_OPTIONS)
-  modifieldFilter.kind = activeTab === 'TV Shows' ? 1 : 2
-  modifieldFilter.minimumScore = minimumScore
-
-  const keys = Object.keys(modifieldFilter)
-  keys.forEach((key, index) => {
-    params += `${key}=${modifieldFilter[key]}`
-    if (index < keys.length - 1) {
-      params += '&'
-    }
-  })
-  return Constants.BASE_RECOMMENDATION_URL + params
-}
+import { getImageURL, getRecommendationUrl } from '../utils'
 
 const Recommendation = ({id, has_poster, title, imdb_rating, released_on, overview}) => {
   const uri = getImageURL(id)
@@ -60,13 +41,13 @@ const TypeSelector = ({activeTab, onTabPress}) => {
   return (
     <View style={{ flexDirection: 'row' }}>
       <Tab 
-        name='TV Shows' 
-        isActive={activeTab === 'TV Shows'} 
+        name={Constants.TV_SHOWS} 
+        isActive={activeTab === Constants.TV_SHOWS}
         onPress={onTabPress}
       />
       <Tab 
-        name='Movies' 
-        isActive={activeTab === 'Movies'}
+        name={Constants.MOVIES} 
+        isActive={activeTab === Constants.MOVIES}
         onPress={onTabPress}
       />
     </View>
@@ -81,7 +62,7 @@ export default class TitleFinder extends Component {
       error: null,
       data: null,
       minimumScore: 0,
-      activeTab: 'Movies'
+      activeTab: Constants.TV_SHOWS
     }
   }
 
@@ -91,7 +72,7 @@ export default class TitleFinder extends Component {
       error: false,
       data: null,
       minimumScore: 0,
-      activeTab: 'TV Shows'
+      activeTab: Constants.TV_SHOWS
     })
   }
 
@@ -168,7 +149,7 @@ export default class TitleFinder extends Component {
     if (data) {
       return this.renderRecommendation(data)
     } else if (loading) {
-      content = <Text> Loading ... </Text>
+      content = <ActivityIndicator size='large' />
     } else if (error) {
       content = <Text> Ops! </Text>
     } else {
