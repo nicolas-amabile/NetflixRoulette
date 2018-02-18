@@ -11,31 +11,9 @@ import {
 } from 'react-native'
 import Header from '../components/header'
 import Tab from '../components/tab'
+import Recommendation from '../components/recommendation'
 import * as Constants from '../constants'
-import { getImageURL, getRecommendationUrl } from '../utils'
-
-const Recommendation = ({id, has_poster, title, imdb_rating, released_on, overview}) => {
-  const uri = getImageURL(id)
-
-  renderImage = () => {
-    if (has_poster) {
-      return (
-        <Image
-          key='image'
-          source={{uri}}
-          style={{resizeMode: 'stretch', height: 400}} />
-      )
-    }
-  }
-
-  return [
-    <Text key='title'> {title} </Text>,
-    this.renderImage(),
-    <Text key='rating'> {`IMDB: ${imdb_rating}`} </Text>,
-    <Text key='year'> {new Date(released_on).getFullYear()} </Text>,
-    <Text key='overview'> {overview} </Text>
-  ]
-}
+import { getRecommendationUrl } from '../utils'
 
 const TypeSelector = ({activeTab, onTabPress}) => {
   return (
@@ -79,7 +57,7 @@ export default class TitleFinder extends Component {
   renderRecommendation (recommendation) {
     const { id } = recommendation
     return (
-      <ScrollView>
+      <ScrollView style={styles.recommendationContainer}>
         <Recommendation {...recommendation} />
         {this.renderSpinButton()}
         {this.renderResetButton()}
@@ -107,7 +85,7 @@ export default class TitleFinder extends Component {
   renderScorePicker () {
     const scoreToDisplay = this.state.minimumScore === 0 ? 'Any' : `More than ${this.state.minimumScore}`
     return [
-      <Text key='scoreLabel'> IMDB minimum score: </Text>,
+      <Text key='scoreLabel' style={styles.scoreLabel}> IMDB score: </Text>,
       <Slider
         key='scorePicker'
         step={1}
@@ -115,8 +93,9 @@ export default class TitleFinder extends Component {
         maximumValue={9}
         onValueChange={(newValue) => this.setState({minimumScore: newValue})}
         value={this.state.minimumScore}
+        style={styles.scoreSlider}
       />,
-      <Text key='scoreValue'> {scoreToDisplay} </Text>
+      <Text key='scoreValue' style={styles.scoreValue}> {scoreToDisplay} </Text>
     ]
   }
 
@@ -149,15 +128,15 @@ export default class TitleFinder extends Component {
     if (data) {
       return this.renderRecommendation(data)
     } else if (loading) {
-      content = <ActivityIndicator size='large' />
+      content = <ActivityIndicator size='large'/>
     } else if (error) {
       content = <Text> Ops! </Text>
     } else {
       content = this.renderForm()
     }
-
+    
     return (
-      <View style={styles.container}>
+      <View style={loading ? styles.loaderContainer : styles.container}>
         {content}
       </View>
     )
@@ -192,12 +171,24 @@ export default class TitleFinder extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // marginVertical: 40,
-    // marginHorizontal: 20
+  scoreLabel: {
+    paddingTop: 20,
+    paddingLeft: 10
   },
+  scoreValue: {
+    textAlign: 'center',
+    marginBottom: 10
+  },
+  scoreSlider: {
+    margin: 10
+  },
+  loaderContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  recommendationContainer: {
+    marginBottom: 10
+  }
 })

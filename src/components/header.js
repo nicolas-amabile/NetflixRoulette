@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Platform.OS === 'ios' ? "System" : "Roboto",
-    fontSize: 17,
     color: Platform.OS === 'ios' ? "#000" : "#fff",
+    fontSize: 17,
     fontWeight: 'bold',
     paddingBottom: Platform.OS === 'ios' ? 10 : 17,
     paddingLeft: Platform.OS === 'ios' ? 0 : '18%'
