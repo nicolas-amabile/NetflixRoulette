@@ -41,16 +41,18 @@ class Recommendation extends Component {
   render () {
     const {id, has_poster, title, imdb_rating, released_on, overview} = this.props
 
-    return [
-      <Text key='title' style={styles.title}> {title} </Text>,
-      this.renderImage(),
-      <Text key='info' style={[styles.info, styles.text]}>
-        {`IMDB: ${imdb_rating} - ${new Date(released_on).getFullYear()}`}
-      </Text>,
-      <Text key='overview' style={[styles.overview, styles.text]}>
-        {overview}
-      </Text>
-    ]
+    return (
+      <React.Fragment>
+        <Text key='title' style={styles.title}> {title} </Text>
+        {this.renderImage()}
+        <Text key='info' style={[styles.info, styles.text]}>
+          {`IMDB: ${imdb_rating} - ${new Date(released_on).getFullYear()}`}
+        </Text>
+        <Text key='overview' style={[styles.overview, styles.text]}>
+          {overview}
+        </Text>
+      </React.Fragment> 
+    )
   }
 }
 

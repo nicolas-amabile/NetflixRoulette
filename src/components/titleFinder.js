@@ -84,19 +84,21 @@ export default class TitleFinder extends Component {
 
   renderScorePicker () {
     const scoreToDisplay = this.state.minimumScore === 0 ? 'Any' : `More than ${this.state.minimumScore}`
-    return [
-      <Text key='scoreLabel' style={styles.scoreLabel}> IMDB score: </Text>,
-      <Slider
-        key='scorePicker'
-        step={1}
-        minimumValue={0}
-        maximumValue={9}
-        onValueChange={(newValue) => this.setState({minimumScore: newValue})}
-        value={this.state.minimumScore}
-        style={styles.scoreSlider}
-      />,
-      <Text key='scoreValue' style={styles.scoreValue}> {scoreToDisplay} </Text>
-    ]
+    return (
+      <React.Fragment> 
+        <Text key='scoreLabel' style={styles.scoreLabel}> IMDB score: </Text>
+        <Slider
+          key='scorePicker'
+          step={1}
+          minimumValue={0}
+          maximumValue={9}
+          onValueChange={(newValue) => this.setState({minimumScore: newValue})}
+          value={this.state.minimumScore}
+          style={styles.scoreSlider}
+        />
+        <Text key='scoreValue' style={styles.scoreValue}> {scoreToDisplay} </Text>
+      </React.Fragment>
+    )
   }
 
   renderType () {
