@@ -109,6 +109,26 @@ export default class TitleFinder extends Component {
     )
   }
 
+  renderSpamMessageQueueButton () {
+    // return (
+    //   <Button
+    //     title='Spam!'
+    //     onPress={() => {
+    //       this.actBussyFor(80000)
+    //     }} />
+    // )
+  }
+
+  actBussyFor (milliseconds) {
+    const start = new Date().getTime()
+    for (let i=0; i< 1e7; i++) {
+      let now = new Date().getTime()
+      if ((now - start) > milliseconds) {
+        break
+      }
+    }
+  }
+
   renderForm () {  
     return (
       <View style={styles.container}>
@@ -116,6 +136,7 @@ export default class TitleFinder extends Component {
         {this.renderType()}
         {this.renderScorePicker()}
         {this.renderSpinButton()}
+        {this.renderSpamMessageQueueButton()}
       </View>
     )
   }
