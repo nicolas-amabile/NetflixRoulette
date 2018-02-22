@@ -1,5 +1,11 @@
 import React, { Component } from 'react'
-import { ImageBackground, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import {
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  View
+} from 'react-native'
 import { getImageURL, getRecommendationUrl } from '../utils'
 import defaultImage from '../../images/defaultImage.png'
 
@@ -8,7 +14,7 @@ class Recommendation extends Component {
     super(props)
     this.state = {
       errorOnImageLoad: false,
-      loading: false
+      loading: true
     }
   }
 
@@ -23,17 +29,20 @@ class Recommendation extends Component {
       } else {
         source = { uri }
       }
-      
+
       return (
-        <ImageBackground
-          key='image'
-          onLoadStart={() => { this.setState({loading: true})}}
-          onLoadEnd={() => { this.setState({loading: false})}}
-          onError={() => { this.setState({errorOnImageLoad: true})}}
-          source={source}
-          style={styles.image}>
-          <ActivityIndicator size='small' animating={loading} />
-        </ImageBackground>
+        <View style={styles.container}>
+          <View style={styles.indicatorContainer}>
+            <ActivityIndicator size='small' animating={this.state.loading} />
+          </View>
+          <Image
+            onLoadStart={() => { this.setState({loading: true})}}
+            onLoadEnd={() => { this.setState({loading: false})}}
+            onError={() => { this.setState({errorOnImageLoad: true})}}
+            source={source}
+            style={styles.image}
+            resizeMode='contain'/>
+        </View>
       )
     }
   }
@@ -77,12 +86,19 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontWeight: '100'
   },
-  image: {
-    height: 400,
+  container: {
     flex: 1,
-    flexDirection: 'column',
+    height: 400,
+    position: 'relative',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  image: {
+    flex: 1,
+    width: '100%'
+  },
+  indicatorContainer: {
+    position:'absolute'
   }
 })
 
