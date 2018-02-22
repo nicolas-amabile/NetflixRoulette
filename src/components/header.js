@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     paddingBottom: Platform.OS === 'ios' ? 10 : 17,
-    paddingLeft: Platform.OS === 'ios' ? 0 : '18%'
+    paddingLeft: Platform.OS === 'ios' ? 0 : 25
   }
 })
 
