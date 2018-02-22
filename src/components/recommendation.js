@@ -19,32 +19,30 @@ class Recommendation extends Component {
   }
 
   renderImage = () => {
-    if (this.props.has_poster) {
-      const uri = getImageURL(this.props.id)
-      const { errorOnImageLoad, loading } = this.state
-      
-      let source
-      if (errorOnImageLoad) {
-        source = defaultImage
-      } else {
-        source = { uri }
-      }
-
-      return (
-        <View style={styles.container}>
-          <View style={styles.indicatorContainer}>
-            <ActivityIndicator size='small' animating={this.state.loading} />
-          </View>
-          <Image
-            onLoadStart={() => { this.setState({loading: true})}}
-            onLoadEnd={() => { this.setState({loading: false})}}
-            onError={() => { this.setState({errorOnImageLoad: true})}}
-            source={source}
-            style={styles.image}
-            resizeMode='contain'/>
-        </View>
-      )
+    const uri = getImageURL(this.props.id)
+    const { errorOnImageLoad, loading } = this.state
+    
+    let source
+    if (errorOnImageLoad || !this.props.has_poster) {
+      source = defaultImage
+    } else {
+      source = { uri }
     }
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.indicatorContainer}>
+          <ActivityIndicator size='small' animating={this.state.loading} />
+        </View>
+        <Image
+          onLoadStart={() => { this.setState({loading: true})}}
+          onLoadEnd={() => { this.setState({loading: false})}}
+          onError={() => { this.setState({errorOnImageLoad: true})}}
+          source={source}
+          style={styles.image}
+          resizeMode='contain'/>
+      </View>
+    )
   }
 
   render () {
@@ -95,6 +93,7 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
+    resizeMode: 'contain',
     width: '100%'
   },
   indicatorContainer: {

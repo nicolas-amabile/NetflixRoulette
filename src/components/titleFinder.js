@@ -90,9 +90,8 @@ export default class TitleFinder extends Component {
     const scoreToDisplay = this.state.minimumScore === 0 ? 'Any' : `More than ${this.state.minimumScore}`
     return (
       <React.Fragment> 
-        <Text key='scoreLabel' style={styles.scoreLabel}> IMDB score: </Text>
+        <Text style={styles.scoreLabel}> IMDB score: </Text>
         <Slider
-          key='scorePicker'
           step={1}
           minimumValue={0}
           maximumValue={9}
@@ -100,7 +99,7 @@ export default class TitleFinder extends Component {
           value={this.state.minimumScore}
           style={styles.scoreSlider}
         />
-        <Text key='scoreValue' style={styles.scoreValue}> {scoreToDisplay} </Text>
+        <Text style={styles.scoreValue}> {scoreToDisplay} </Text>
       </React.Fragment>
     )
   }
