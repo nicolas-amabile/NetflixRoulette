@@ -68,17 +68,21 @@ export default class TitleFinder extends Component {
   renderSpinButton () {
     const buttonText = this.state.data ? 'Spin again!' : 'Spin!'
     return (
-      <Button
-        onPress={this.fetchData.bind(this)}
-        title={buttonText} />
+      <View style={styles.buttonContainer}>
+        <Button
+          onPress={this.fetchData.bind(this)}
+          title={buttonText} />
+      </View>
     )
   }
 
   renderResetButton () {
     return (
-      <Button
-        onPress={this.reset.bind(this)}
-        title='Reset filters!' />
+      <View style={styles.buttonContainer}>
+        <Button
+          onPress={this.reset.bind(this)}
+          title='Reset filters!' />
+      </View>
     )
   }
 
@@ -192,5 +196,9 @@ const styles = StyleSheet.create({
   },
   recommendationContainer: {
     marginBottom: 10
+  },
+  buttonContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 8
   }
 })
